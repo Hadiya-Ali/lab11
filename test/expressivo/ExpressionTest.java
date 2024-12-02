@@ -5,7 +5,7 @@ package expressivo;
 
 import static org.junit.Assert.*;
 
-
+import java.io.IOException;
 
 import org.junit.Test;
 
@@ -148,6 +148,64 @@ public class ExpressionTest {
         
         assertTrue(m1.equals(m2));
     }
+    @Test(expected = IllegalArgumentException.class)
+    public void testInvalidVariableName() {
+       
+        Variables v1 = new Variables("");
+    }
+
+   
+
+
+    @Test
+	
+	public void testaddition() {
+	    Expression X = new Variables("a");
+	    Expression Y = new Variables("b");
+	    Expression additionOperation1 = new Addition(X, Y);
+	    Expression additionOperation2 = new Addition( new Variables("a"), new Variables("b"));
+	   
+	    assertEquals(additionOperation1.hashCode(), additionOperation2.hashCode());
+	    
+	}@Test
+	public void testNumber() {
+	   
+	    Expression number = new Number(3);
+	    Expression derivative = number.differentiate("a");
+	    Expression expectedDerivative = new Number(0);
+	    assertTrue(derivative.equals(expectedDerivative));
+	}
+
+	@Test
+	public void testVariable() {
+	    Expression v = new Variables("a");
+
+	    Expression d = v.differentiate("b");
+
+	    Expression expectedDerivative = new Number(0);
+	    assertTrue(d.equals(expectedDerivative));
+	}
+	
+	@Test
+	public void testAddition() {
+	    
+	    Expression x = new Variables("a");
+	    Expression c = new Number(4);
+	    Expression a = new Addition(x, c); 
+
+	    
+	    Expression d = a.differentiate("a");
+	    Expression expectedDerivative = new Addition(new Number(1), new Number(0));
+	    assertTrue(d.equals(expectedDerivative));
+	}
+
+	
+	
+
+
+	
     
+   
+
     
 }

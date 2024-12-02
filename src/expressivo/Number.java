@@ -15,6 +15,9 @@ public class Number implements Expression{
 	    	//giving back the string
 	        return Double.toString(v);
 	    }
+	    public Expression differentiate(String v) {
+	        return new Number(0);  
+	    }
 
 	    @Override
 	    public boolean equals(Object ob) {

@@ -2,7 +2,7 @@ package expressivo;
 
 import java.util.Objects;
 
-public class Variables {
+public class Variables implements Expression {
 
 	private final String v;
 
@@ -20,6 +20,15 @@ public class Variables {
         return v;
         
     }
+    @Override
+    public Expression differentiate(String var) {
+        if (this.v.equals(var)) {
+            return new Number(1);  // The derivative of 'v' with respect to 'v' is 1
+        } else {
+            return new Number(0);  // The derivative of 'v' with respect to another variable is 0
+        }
+    }
+    
 
     @Override
     public boolean equals(Object Ob) {

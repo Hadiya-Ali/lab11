@@ -3,6 +3,7 @@
  */
 package expressivo;
 
+import java.io.IOException;
 import java.util.Map;
 
 /**
@@ -23,10 +24,16 @@ public class Commands {
      *         to the derivative, but doesn't need to be in simplest or canonical form.
      * @throws IllegalArgumentException if the expression or variable is invalid
      */
-    public static String differentiate(String expression, String variable) {
-        throw new RuntimeException("unimplemented");
+	public static String differentiate(String exp, String v) {
+        try {
+            
+            Expression ex = Expression.parse(exp);
+            Expression d = ex.differentiate(v);
+            return d.toString();
+        } catch (IOException e) {
+            throw new IllegalArgumentException("Invalid expression format", e);
+        }
     }
-    
     /**
      * Simplify an expression.
      * @param expression the expression to simplify

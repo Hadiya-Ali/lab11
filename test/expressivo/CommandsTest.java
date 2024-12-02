@@ -17,8 +17,22 @@ public class CommandsTest {
     
     @Test(expected=AssertionError.class)
     public void testAssertionsEnabled() {
-        assert false; // make sure assertions are enabled with VM argument: -ea
+        assert false; 
     }
+    
+    @Test
+    public void testDifferentiateVariable() {
+        String expr = "x";         
+        String variable = "x";    
+        
+        
+        String expected = "1";    
+        
+        String result = Commands.differentiate(expr, variable);  
+        
+        assertEquals(expected, result);  
+    }
+
     
     
     // TODO tests for Commands.differentiate() and Commands.simplify()

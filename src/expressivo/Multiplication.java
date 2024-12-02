@@ -20,7 +20,7 @@ public class Multiplication implements Expression {
 
     @Override
     public String toString() {
-    	//returing the string
+    	
         
         String lftStr = lt.toString();
         String rghtStr = rt.toString();
@@ -41,10 +41,23 @@ public class Multiplication implements Expression {
        
         return lt.equals(m.lt) && rt.equals(m.rt);
     }
+    @Override
+    public Expression differentiate(String var) {
+        
+        Expression leftD = lt.differentiate(var);
+        Expression rightD = rt.differentiate(var);
+
+        
+        Expression t1 = new Multiplication(leftD, rt);
+        Expression t2 = new Multiplication(lt, rightD);
+
+   
+        return new Addition(t1, t2);
+    }
 
     @Override
     public int hashCode() {
-       //returning hash
+     
         return Objects.hash(lt, rt);
     }
 }

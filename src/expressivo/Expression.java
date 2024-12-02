@@ -2,7 +2,7 @@
  * Redistribution of original or derived work requires permission of course staff.
  */
 package expressivo;
-
+import java.io.IOException;
 /**
  * An immutable data type representing a polynomial expression of:
  *   + and *
@@ -16,19 +16,94 @@ package expressivo;
  */
 public interface Expression {
     
-    // Datatype definition
-    //   TODO
     
-    /**
-     * Parse an expression.
-     * @param input expression to parse, as defined in the PS3 handout.
-     * @return expression AST for the input
-     * @throws IllegalArgumentException if the expression is invalid
-     */
-    public static Expression parse(String input) {
-        throw new RuntimeException("unimplemented");
-    }
-    
+	public static Expression parse(String in) throws IOException {
+	    in = in.replaceAll("\\s+", ""); 
+	    return parseExpression(in);
+	}
+
+	private static Expression parseExpression(String in) throws IOException {
+	    return parseAdd(in);
+	}
+
+	
+	private static Expression parseAdd(String in) throws IOException {
+	    Expression lft = parseMulti(in);
+	    if (lft == null) return null;
+
+	    while (in.length() > 0 && (in.charAt(0) == '+' )) {
+	        String operator = String.valueOf(in.charAt(0));
+	        in = in.substring(1); 
+	        Expression right = parseMulti(in);
+	        if (right == null) throw new IOException("Invalid expression: missing operand after operator");
+	        if (operator.equals("+")) {
+	            lft = new Addition(lft, right); 
+	        }
+	        
+	    }
+
+	    return lft;
+	}
+
+	
+	private static Expression parseMulti(String in) throws IOException {
+	    Expression lft = parsePr(in);
+	    if (lft == null) return null;
+
+	    while (in.length() > 0 && (in.charAt(0) == '*' )) {
+	        String op = String.valueOf(in.charAt(0));
+	        in = in.substring(1); 
+	        Expression rght = parsePr(in);
+	        if (rght == null) throw new IOException("Invalid expression: missing operand after operator");
+	        lft = new Multiplication(lft, rght); 
+	    }
+
+	    return lft;
+	}
+
+	// Parse primary expressions (numbers, variables, or parentheses)
+	private static Expression parsePr(String input) throws IOException {
+	    if (input.isEmpty()) return null;
+
+	    // Handle numbers (integers or floats)
+	    if (Character.isDigit(input.charAt(0)) || input.charAt(0) == '.') {
+	        int endInx = 0;
+	        while (endInx < input.length() && (Character.isDigit(input.charAt(endInx)) || input.charAt(endInx) == '.')) {
+	            endInx++;
+	        }
+	        String numberStr = input.substring(0, endInx);
+	        double value = Double.parseDouble(numberStr);
+	        input = input.substring(endInx); 
+	        return new Number(value);
+	    }
+
+	    if (Character.isLetter(input.charAt(0))) {
+	        int endInx = 0;
+	        while (endInx < input.length() && (Character.isLetterOrDigit(input.charAt(endInx)))) {
+	            endInx++;
+	        }
+	        String varName = input.substring(0, endInx);
+	        input = input.substring(endInx);
+	        return new Variables(varName);
+	    }
+
+	    
+	    if (input.charAt(0) == '(') {
+	        input = input.substring(1);
+	        Expression innerExpr = parseExpression(input);
+	        if (innerExpr == null || input.isEmpty() || input.charAt(0) != ')') {
+	            throw new IOException("Invalid expression: mismatched parentheses");
+	        }
+	        input = input.substring(1); 
+	        return innerExpr;
+	    }
+
+	   
+	    throw new IOException("Invalid expression: unrecognized token");
+	}
+
+
+   
     /**
      * @return a parsable representation of this expression, such that
      * for all e:Expression, e.equals(Expression.parse(e.toString())).
@@ -53,5 +128,6 @@ public interface Expression {
     public int hashCode();
     
     // TODO more instance methods
+    Expression differentiate(String var);
     
 }
